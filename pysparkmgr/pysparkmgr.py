@@ -22,8 +22,8 @@ class PySparkManager(Singleton):
 
         conf = SparkConf().setAppName(appName)\
                           .setMaster(master)\
-                          .set('spark.local.ip', '210.102.142.14')\
-                          .set('spark.driver.host', '210.102.142.14')
+                          .set('spark.local.ip', '---')\
+                          .set('spark.driver.host', '---')
         return SparkContext(conf=conf)
 
     def getsrs(self, day):
