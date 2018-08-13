@@ -7,16 +7,14 @@ from PyQt5.QtWidgets import QDesktopWidget
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
-from tabs.tabdaily import TabDaily
-
-
-MAIN_FRAME_TITLE = 'Natural Light Data Center v0.1.0'
+from tabs.daily.tab_daily import TabDaily
 
 
 class MainFrame(QWidget):
-    def __init__(self):
+    def __init__(self, title):
         QWidget.__init__(self, flags=Qt.Widget)
 
+        self.title = title
         self.tabs = QTabWidget()
         self.tabList = []
         self.tabTitle = ['single', 'daily', 'monthly', 'yearly']
@@ -24,7 +22,7 @@ class MainFrame(QWidget):
 
     def setupUI(self):
         self.setGeometry(0, 0, 1280, 720)
-        self.setWindowTitle(MAIN_FRAME_TITLE)
+        self.setWindowTitle(self.title)
         self.setWindowIcon(QIcon('icon.png'))
         self.center()
 
@@ -56,6 +54,6 @@ class MainFrame(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MainFrame()
+    window = MainFrame('Natural Light Data Center v0.1.0')
     window.show()
     app.exec_()

@@ -6,9 +6,9 @@ from pysparkmgr.singleton import Singleton
 
 
 class PySparkManager(Singleton):
-    sc = None
 
-    def __init__(self):
+    def __init__(self, bs_server_ip):
+        self.bs_server_ip = bs_server_ip
         self.sc = self.getSparkContext('appName', 'local[*]')
         self.sqlContext = self.getSqlContext()
         self.sundf = self.sqlContext.read.parquet("hdfs:///ds/sun.parquet")
@@ -22,8 +22,8 @@ class PySparkManager(Singleton):
 
         conf = SparkConf().setAppName(appName)\
                           .setMaster(master)\
-                          .set('spark.local.ip', '210.102.142.14')\
-                          .set('spark.driver.host', '210.102.142.14')
+                          .set('spark.local.ip', self.bs_server_ip)\
+                          .set('spark.driver.host', self.bs_server_ip)
         return SparkContext(conf=conf)
 
     def getsrs(self, day):

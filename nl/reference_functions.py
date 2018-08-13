@@ -10,18 +10,6 @@ def erythemal_action_spectrum(wavelength):
         return 0
 
 
-def erythemal_action_spectrum_interpolated(wavelength):
-    # 홍반가중함수
-    if 250 <= int(wavelength) <= 298:
-        return 1
-    elif 298 < int(wavelength) <= 328:
-        return pow(10, 0.094 * (298 - wavelength))
-    elif 328 < int(wavelength) <= 400:
-        return pow(10, 0.015 * (140 - wavelength))
-    else:
-        return 0
-
-
 def vitd_weight_func(wavelength):
     # 비타민 D 가중함수
     if 252 <= int(wavelength) <= 330:
@@ -39,26 +27,32 @@ def vitd_weight_func(wavelength):
         return 0
 
 
-# def vitd_weight_func_interpolated(wavelength):
-#     # 비타민 D 가중함수
-#     if 252 <= int(wavelength) <= 330:
-#         weight_table = [0.036, 0.039, 0.043, 0.047, 0.051, 0.056, 0.061, 0.066, 0.075, 0.084,
-#                         0.093, 0.102, 0.112, 0.122, 0.133, 0.146, 0.160, 0.177, 0.195, 0.216,
-#                         0.238, 0.263, 0.289, 0.317, 0.346, 0.376, 0.408, 0.440, 0.474, 0.543,
-#                         0.583, 0.617, 0.652, 0.689, 0.725, 0.763, 0.805, 0.842, 0.878, 0.903,
-#                         0.928, 0.952, 0.976, 0.983, 0.990, 0.996, 1.000, 0.977, 0.951, 0.917,
-#                         0.878, 0.771, 0.701, 0.634, 0.566, 0.488, 0.395, 0.306, 0.220, 0.156,
-#                         0.119, 0.083, 0.049, 0.034, 0.020, 0.0141, 0.00976, 0.00652, 0.00436,
-#                         0.00292, 0.00195, 0.00131, 0.000873, 0.000584, 0.000390, 0.000261, 0.000175, 0.000117,
-#                         0.000078]
-#
-#         weighted_interpolated =
-#         int(wavelength) - 252
-#         # return weight_table[int(wavelength) - 252]
-#     else:
-#         return 0
+# not verified yet
+def vitd_weight_func_interpolated(wavelength):
+    # 비타민 D 가중함수
+    if 252 <= int(wavelength) <= 330:
+        weight_table = [0.036, 0.039, 0.043, 0.047, 0.051, 0.056, 0.061, 0.066, 0.075, 0.084,
+                        0.093, 0.102, 0.112, 0.122, 0.133, 0.146, 0.160, 0.177, 0.195, 0.216,
+                        0.238, 0.263, 0.289, 0.317, 0.346, 0.376, 0.408, 0.440, 0.474, 0.543,
+                        0.583, 0.617, 0.652, 0.689, 0.725, 0.763, 0.805, 0.842, 0.878, 0.903,
+                        0.928, 0.952, 0.976, 0.983, 0.990, 0.996, 1.000, 0.977, 0.951, 0.917,
+                        0.878, 0.771, 0.701, 0.634, 0.566, 0.488, 0.395, 0.306, 0.220, 0.156,
+                        0.119, 0.083, 0.049, 0.034, 0.020, 0.0141, 0.00976, 0.00652, 0.00436,
+                        0.00292, 0.00195, 0.00131, 0.000873, 0.000584, 0.000390, 0.000261, 0.000175, 0.000117,
+                        0.000078]
 
-# VERIFIED CALCULATION AND FUNCTION 180727
+        x = wavelength
+        x1 = int(wavelength) - 252  # the shortest index of integer wavelength point on the left side
+        x2 = x1 + 1  # one step of right side
+        y1 = weight_table[x1]
+        y2 = weight_table[x2]
+
+        return y1 + (y2 - y1) * (x - x1) / (x2 - x1)  # linear interpolation
+    else:
+        return 0
+
+
+# VERIFIED BY Jake IN 180727
 def uv_hazard_weight_func(wavelength, dbg=False):
     # 자외선 위해 가중함수 (IEC 62471)
     if 200 <= int(wavelength) <= 400:
