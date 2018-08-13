@@ -1,19 +1,17 @@
-from PyQt5.QtWidgets import QWidget
+import numpy as np
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.QtWidgets import QHBoxLayout
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import Qt
-
+from PyQt5.QtWidgets import QWidget
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
-import numpy as np
-
 from pysparkmgr.pysparkmgr import PySparkManager
+from tabs.daily.groupbox import GbxVisual
 from tabs.daily.listwdg import DateList
-from tabs.daily.groupbox import GbxVisual, GbxFactor
 
 
 class TabDaily(QWidget):
@@ -56,7 +54,7 @@ class TabDaily(QWidget):
         self.setLayout(self.mainLayout)
 
         # get PySparkManager
-        self.pysparkmgr = PySparkManager.instance()
+        self.pysparkmgr = PySparkManager()
 
     @pyqtSlot(name='drawPlot')
     def drawLinePlot(self):

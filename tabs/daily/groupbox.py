@@ -50,4 +50,3 @@ class GbxVisual(QGroupBox):
 class GbxFactor(QGroupBox):
     def __init__(self):
         QGroupBox.__init__(self)
-        pass

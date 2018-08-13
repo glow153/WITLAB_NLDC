@@ -1,14 +1,17 @@
-from pyspark import SparkContext
 from pyspark import SparkConf
+from pyspark import SparkContext
 from pyspark.sql import SQLContext
-
 from pysparkmgr.singleton import Singleton
 
 
+# 싱글톤을 쓰는 이유 : PySpark에 한번만 접속하여 연결을 유지해야 하기 때문, 중복접속시 에러남
+# 따라서 Spark로의 모든 접속은 PySparkManager 싱글톤 객체를 통해서만 수행되어야 함
+# 다른 좋은 방법들도 있겠지만 우선은 싱글톤을 활용해보자
 class PySparkManager(Singleton):
+    sc = None
 
-    def __init__(self, bs_server_ip):
-        self.bs_server_ip = bs_server_ip
+    def __init__(self):
+        self.bs_server_ip = '210.102.142.14'
         self.sc = self.getSparkContext('appName', 'local[*]')
         self.sqlContext = self.getSqlContext()
         self.sundf = self.sqlContext.read.parquet("hdfs:///ds/sun.parquet")

@@ -1,12 +1,8 @@
-class Singleton:
-    __instance = None
+class Singleton(object):
+    _instance = None
 
-    @classmethod
-    def __getInstance(cls):
-        return cls.__instance
-
-    @classmethod
-    def instance(cls, *args, **kargs):
-        cls.__instance = cls(*args, **kargs)
-        cls.instance = cls.__getInstance
-        return cls.__instance
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Singleton, cls).__new__(
+                cls, *args, **kwargs)
+        return cls._instance
