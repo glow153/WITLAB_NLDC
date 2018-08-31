@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 
 from tabs.daily.tab_daily import TabDaily
+from tabs.single.tab_single import TabSingle
 
 
 class MainFrame(QWidget):
@@ -54,7 +55,7 @@ class MainFrame(QWidget):
         self.tabList = []
         self.tabTitle = ['single', 'daily', 'monthly', 'yearly']
 
-        self.tabList.append(QWidget())
+        self.tabList.append(TabSingle())
         self.tabList.append(TabDaily())
         self.tabList.append(QWidget())
         self.tabList.append(QWidget())

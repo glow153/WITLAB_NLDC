@@ -26,7 +26,6 @@ class TabDaily(QWidget):
         self.btn_drawPlot.clicked.connect(self.drawLinePlot)
 
         self.fig = plt.Figure()
-        self.fig.tight_layout()
         self.canvas = FigureCanvas(self.fig)
 
         # Left Layout
@@ -58,20 +57,17 @@ class TabDaily(QWidget):
 
     @pyqtSlot(name='drawPlot')
     def drawLinePlot(self):
+        # reset plot
         plt.close()
         self.fig.clear()
 
         daylist = self.datelist.getItemChecked()
 
         for day in daylist:
-            df = self.pysparkmgr.getSqlContext()\
-                                .read.parquet('hdfs:///ds/nt.parquet')
-            rise = self.pysparkmgr.getsrs(day)['rise']
-            set = self.pysparkmgr.getsrs(day)['set']
+            df = self.pysparkmgr.getSqlContext() \
+                .read.parquet('hdfs:///ds/nt_srs.parquet')
 
-            sel = df.filter('date == "%s"' % day) \
-                    .filter('time >= "%s"' % rise) \
-                    .filter('time <= "%s"' % set)
+            sel = df.filter('date == "%s"' % day)
 
             illum = sel.select('illum') \
                        .toPandas()\
