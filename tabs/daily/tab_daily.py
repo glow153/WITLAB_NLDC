@@ -10,8 +10,8 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from pysparkmgr.pysparkmgr import PySparkManager
-from tabs.daily.groupbox import GbxVisual
-from tabs.daily.listwdg import DateList
+from tabs.daily.gbox_linetype import GbxVisual
+from tabs.daily.listwdg_datelist import DateList
 
 
 class TabDaily(QWidget):
@@ -34,7 +34,7 @@ class TabDaily(QWidget):
 
         # Right Layout
         self.rightLayout = QVBoxLayout()
-        self.datelist = DateList(self)
+        self.datelist = DateList(self, self.getDatelist())
         self.datelist.makeList()
         self.gbxVisual = GbxVisual('선 종류')
         self.rightLayout.addWidget(self.lbl_selectDay)
@@ -54,6 +54,13 @@ class TabDaily(QWidget):
 
         # get PySparkManager
         self.pysparkmgr = PySparkManager()
+
+    def getDatelist(self):
+        pysparkmgr = PySparkManager()
+        df = pysparkmgr.getSqlContext() \
+            .read.parquet('hdfs:///ds/nt_srs.parquet')
+        datelist = df.select('date').sort('date').distinct().toPandas().values.tolist()
+        return list(map(lambda date: date[0], datelist))
 
     @pyqtSlot(name='drawPlot')
     def drawLinePlot(self):
@@ -77,11 +84,11 @@ class TabDaily(QWidget):
                      .toPandas()\
                      .values
 
-            hmseq = sel.select('time') \
-                       .toPandas()\
-                       .values
+            timelist = sel.select('time') \
+                .toPandas() \
+                .values
 
-            hmlist = [x[0] for x in hmseq]
+            hmlist = [x[0] for x in timelist]
             xtick_list = []
             xticklabel_list = []
             for i in range(0, len(hmlist)):
@@ -92,8 +99,8 @@ class TabDaily(QWidget):
             ax1 = self.fig.add_subplot(111)
             ax2 = ax1.twinx()
 
-            ax1.plot(np.arange(len(hmseq)), illum, color='blue', label='illum')
-            ax2.plot(np.arange(len(hmseq)), cct, color='red', label='cct')
+            ax1.plot(np.arange(len(timelist)), illum, color='blue', label='illum')
+            ax2.plot(np.arange(len(timelist)), cct, color='red', label='cct')
 
             ax1.set_xticks(xtick_list)
             ax1.set_xticklabels(xticklabel_list)
@@ -108,3 +115,12 @@ class TabDaily(QWidget):
             # plt.show()
 
             self.canvas.draw()
+
+    def makeTimeline(self, ax, timelist):
+        hmlist = [x[0] for x in timelist]
+        xtick_list = []
+        xticklabel_list = []
+        for i in range(0, len(hmlist)):
+            if hmlist[i].split(':')[1] == '00':
+                xtick_list.append(i)
+                xticklabel_list.append(hmlist[i].split(':')[0])
