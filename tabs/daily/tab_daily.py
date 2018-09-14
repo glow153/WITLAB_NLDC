@@ -18,7 +18,7 @@ class TabDaily(QWidget):
         self.fig = plt.Figure()
         self.canvas = FigureCanvas(self.fig)
 
-        self.datelist = GbxDatelist('날짜 선택')
+        self.datelist = GbxDatelist('데이터 선택')
         self.gbxAxis = GbxAxis('y축 설정')
         self.gbxVisual = GbxVisual('선 종류')
         self.gbxFilter = GbxFilter('필터링 적용')
@@ -65,7 +65,7 @@ class TabDaily(QWidget):
         plt.close()
         self.fig.clear()
 
-        daylist = self.datelist.getItemChecked()
+        daylist = self.datelist.getDateChecked()
         selectedColumn = self.gbxAxis.getSelectedItem()
         plotTitle = ''
 

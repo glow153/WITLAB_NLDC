@@ -10,38 +10,62 @@ from pysparkmgr import PySparkManager
 class GbxDatelist(QGroupBox):
     def __init__(self, title):
         QGroupBox.__init__(self, title)
-        self.listwdg = QListWidget()
+        self.totalDateListwdg = QListWidget()
+        self.itemListwdg_l = QListWidget()
+        self.itemListwdg_r = QListWidget()
+
+        self.layout = QHBoxLayout()
 
         # get date list from dataframe using pyspark
-        self.initDateList()
+        self.initTotalDateList()
 
-        # init layout
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.listwdg)
+        # set components and layout
+        self.setComponentsWithLayout()
+
+    def setComponentsWithLayout(self):
+        totaldatelistLayout = QVBoxLayout()
+        itemListLayout_l = QVBoxLayout()
+        itemListLayout_r = QVBoxLayout()
+
+        # set size
+        self.totalDateListwdg.setFixedWidth(120)
+        self.itemListwdg_l.setFixedWidth(150)
+        self.itemListwdg_r.setFixedWidth(150)
+
+        totaldatelistLayout.addWidget(QLabel('날짜 선택'))
+        totaldatelistLayout.addWidget(self.totalDateListwdg)
+        itemListLayout_l.addWidget(QLabel('왼쪽 축 데이터'))
+        itemListLayout_l.addWidget(self.itemListwdg_l)
+        itemListLayout_r.addWidget(QLabel('오른쪽 축 데이터'))
+        itemListLayout_r.addWidget(self.itemListwdg_r)
+
+        self.layout.addLayout(totaldatelistLayout, 40)
+        self.layout.addLayout(itemListLayout_l, 30)
+        self.layout.addLayout(itemListLayout_r, 30)
         self.setLayout(self.layout)
 
-    def initDateList(self):
+    def initTotalDateList(self):
         pysparkmgr = PySparkManager()
-        datelist = pysparkmgr.getDF('nt_srs') \
+        totaldatelist = pysparkmgr.getDF('nt_srs') \
             .select('date') \
             .sort('date') \
             .distinct() \
             .toPandas().values.tolist()
 
-        datelist = list(map(lambda date: date[0], datelist))
+        totaldatelist = list(map(lambda date: date[0], totaldatelist))
 
-        for dt in datelist:
+        for dt in totaldatelist:
             item = QListWidgetItem()
             item.setText(dt)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Unchecked)
-            self.listwdg.addItem(item)
+            self.totalDateListwdg.addItem(item)
 
-    def getItemChecked(self):
+    def getDateChecked(self):
         ret = []
-        for i in range(self.listwdg.count()):
-            if self.listwdg.item(i).checkState() == Qt.Checked:
-                ret.append(self.listwdg.item(i).text())
+        for i in range(self.totalDateListwdg.count()):
+            if self.totalDateListwdg.item(i).checkState() == Qt.Checked:
+                ret.append(self.totalDateListwdg.item(i).text())
         return ret
 
 
