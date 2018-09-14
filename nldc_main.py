@@ -2,37 +2,34 @@ import sys
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QDesktopWidget
-from PyQt5.QtWidgets import QTabWidget
-from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QTabWidget, QVBoxLayout,
+                             QWidget)
 
 from tabs.daily.tab_daily import TabDaily
 from tabs.single.tab_single import TabSingle
 
 
-class MainFrame(QWidget):
+class NLDC_Main(QWidget):
     def __init__(self, title):
         QWidget.__init__(self, flags=Qt.Widget)
-
         self.title = title
+
+        self.centerLayout = QVBoxLayout(self)
+
         self.setupUI()
 
     def setupUI(self):
         self.setGeometry(0, 0, 1280, 720)
         self.setWindowTitle(self.title)
         self.setWindowIcon(QIcon('icon.png'))
-        self.moveWindowsToCenter()
+        self.wnd2Center()
 
         self.initTabs()
 
-        self.centerLayout = QVBoxLayout(self)
         self.centerLayout.addWidget(self.tabs)
-        # self.centerLayout.addStretch(1)
         self.setLayout(self.centerLayout)
 
-    def moveWindowsToCenter(self):
+    def wnd2Center(self):
         # geometry of the main window
         qr = self.frameGeometry()
         # center point of screen
@@ -66,6 +63,6 @@ class MainFrame(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MainFrame('Natural Light Data Center')
+    window = NLDC_Main('Natural Light Data Center')
     window.show()
     app.exec_()

@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QComboBox, QGroupBox, QVBoxLayout, QHBoxLayout,
-                             QGridLayout, QLabel, QCheckBox,
+                             QGridLayout, QLabel, QCheckBox, QLineEdit,
                              QListWidget, QListWidgetItem)
 from matplotlib import colors as mcolors
 
@@ -13,24 +13,23 @@ class GbxDatelist(QGroupBox):
         self.listwdg = QListWidget()
 
         # get date list from dataframe using pyspark
-        self.datelist = self.getDatelist()
-        self.makeList(self.datelist)
+        self.initDateList()
 
         # init layout
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.listwdg)
         self.setLayout(self.layout)
 
-    def getDatelist(self):  # 날짜만 가져옴
+    def initDateList(self):
         pysparkmgr = PySparkManager()
         datelist = pysparkmgr.getDF('nt_srs') \
             .select('date') \
             .sort('date') \
             .distinct() \
             .toPandas().values.tolist()
-        return list(map(lambda date: date[0], datelist))
 
-    def makeList(self, datelist):
+        datelist = list(map(lambda date: date[0], datelist))
+
         for dt in datelist:
             item = QListWidgetItem()
             item.setText(dt)
@@ -101,6 +100,14 @@ class GbxVisual(QGroupBox):
 
 
 class GbxAxis(QGroupBox):
+    @staticmethod
+    def default_ylim(type):
+        if type is 'illum':
+            return 140000
+        elif type is 'cct':
+            return 12000
+        elif type is 'swr':
+            return 60
 
     def __init__(self, title):
         QGroupBox.__init__(self, title)
@@ -111,37 +118,64 @@ class GbxAxis(QGroupBox):
 
         self.cbxLeft = QComboBox()
         self.cbxRight = QComboBox()
-        self.chkEnableRightAxis = QCheckBox()
-        self.layout = QGridLayout()
+        self.leLeftLowerLim = QLineEdit('0')
+        self.leLeftUpperLim = QLineEdit(str(self.default_ylim('illum')))
+        self.leRightLowerLim = QLineEdit()
+        self.leRightUpperLim = QLineEdit()
+
+        # init comps
+        self.leLeftLowerLim.setFixedWidth(70)
+        self.leLeftUpperLim.setFixedWidth(70)
+        self.leRightLowerLim.setFixedWidth(70)
+        self.leRightUpperLim.setFixedWidth(70)
+
+        self.chkEnableRightAxis = QCheckBox('오른쪽 축')
+
+        self.layout = QHBoxLayout()
 
         self.chkEnableRightAxis.setChecked(False)
         self.cbxRight.setEnabled(False)
+        self.leRightLowerLim.setEnabled(False)
+        self.leRightUpperLim.setEnabled(False)
 
         self.setItemsInCbx()
         self.setComponentsWithLayout()
 
         self.chkEnableRightAxis.stateChanged.connect(self.enableRightAxis)
+        self.cbxLeft.currentTextChanged.connect(self.initLeYlim_left)
+        self.cbxRight.currentTextChanged.connect(self.initLeYlim_right)
 
     def setItemsInCbx(self):
         self.cbxLeft.addItems(self.leftAxis)
         self.cbxRight.addItems(self.rightAxis)
 
     def setComponentsWithLayout(self):
-        self.layout.setColumnStretch(1, 3)
-        self.layout.setColumnStretch(2, 3)
+        leftLayout = QVBoxLayout()
+        rightLayout = QGridLayout()
 
-        self.layout.addWidget(QLabel('왼쪽 축'), 0, 1)
-        self.layout.addWidget(self.cbxLeft, 0, 2)
-        self.layout.addWidget(self.chkEnableRightAxis, 1, 0)
-        self.layout.addWidget(QLabel('오른쪽 축'), 1, 1)
-        self.layout.addWidget(self.cbxRight, 1, 2)
+        leftLayout.addWidget(QLabel('     '))
+        leftLayout.addWidget(QLabel('왼쪽 축'))
+        leftLayout.addWidget(self.chkEnableRightAxis)
+
+        rightLayout.setColumnStretch(1, 2)
+        rightLayout.setColumnStretch(2, 2)
+        rightLayout.setColumnStretch(3, 2)
+
+        rightLayout.addWidget(QLabel('항목'), 0, 0)
+        rightLayout.addWidget(QLabel('Y축 상한값'), 0, 1)
+        rightLayout.addWidget(QLabel('Y축 하한값'), 0, 2)
+        rightLayout.addWidget(self.cbxLeft, 1, 0)
+        rightLayout.addWidget(self.leLeftLowerLim, 1, 1)
+        rightLayout.addWidget(self.leLeftUpperLim, 1, 2)
+        rightLayout.addWidget(self.cbxRight, 2, 0)
+        rightLayout.addWidget(self.leRightLowerLim, 2, 1)
+        rightLayout.addWidget(self.leRightUpperLim, 2, 2)
+
+        self.layout.addLayout(leftLayout)
+        self.layout.addLayout(rightLayout)
+        self.layout.setStretchFactor(leftLayout, 0)
+        self.layout.setStretchFactor(rightLayout, 1)
         self.setLayout(self.layout)
-
-    def enableRightAxis(self):
-        if self.chkEnableRightAxis.isChecked():
-            self.cbxRight.setEnabled(True)
-        else:
-            self.cbxRight.setEnabled(False)
 
     def getSelectedItem(self):
         if self.chkEnableRightAxis.isChecked():
@@ -149,9 +183,27 @@ class GbxAxis(QGroupBox):
         else:
             return [str(self.cbxLeft.currentText())]
 
+    # signals from here
+    def enableRightAxis(self):
+        if self.chkEnableRightAxis.isChecked():
+            self.cbxRight.setEnabled(True)
+            self.leRightLowerLim.setEnabled(True)
+            self.leRightUpperLim.setEnabled(True)
+        else:
+            self.cbxRight.setEnabled(False)
+            self.leRightLowerLim.setEnabled(False)
+            self.leRightUpperLim.setEnabled(False)
+
+    def initLeYlim_left(self, type):
+        self.leLeftLowerLim.text = '0'
+        self.leLeftUpperLim.text = str(self.default_ylim(type))
+
+    def initLeYlim_right(self, type):
+        self.leRightLowerLim.text = '0'
+        self.leRightUpperLim.text = str(self.default_ylim(type))
+
 
 class GbxFilter(QGroupBox):
-
     def __init__(self, title):
         QGroupBox.__init__(self, title)
         # self.setFixedSize(120, 150)
@@ -166,8 +218,6 @@ class GbxFilter(QGroupBox):
         self.setItemsInCbx()
         self.setComponentsWithLayout()
 
-        # self.chkEnableFilter.stateChanged.connect(self.enableFilter)
-
     def setItemsInCbx(self):
         self.cbxFilterType.addItems(self.filterTypeList)
 
@@ -178,8 +228,5 @@ class GbxFilter(QGroupBox):
         self.layout.addStretch(1)
         self.setLayout(self.layout)
 
-    # def enableFilter(self):
-    #     if self.chkEnableFilter.isChecked():
-    #         self.cbxFilterType.setEnabled(True)
-    #     else:
-    #         self.cbxFilterType.setEnabled(False)
+    def getFilterType(self):
+        return self.cbxFilterType.currentIndex()

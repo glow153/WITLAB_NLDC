@@ -5,11 +5,11 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from pysparkmgr import PySparkManager
+from tabs.daily.filter import JFilter
 from tabs.daily.gbox import (GbxDatelist, GbxVisual, GbxAxis, GbxFilter)
 
 
 class TabDaily(QWidget):
-
     def __init__(self):
         QWidget.__init__(self, flags=Qt.Widget)
 
@@ -72,6 +72,7 @@ class TabDaily(QWidget):
         for day in daylist:  # multiple select by checked days
             df = self.pysparkmgr.getDF('nt_srs')
 
+            # select every single day
             sel = df.filter('date == "%s"' % day)
 
             timelist = sel.select('time') \
@@ -92,40 +93,46 @@ class TabDaily(QWidget):
 
             ax_left = self.fig.add_subplot(111)
             ax_left.plot(np.arange(len(timelist)), left,
-                         color='blue', label=selectedColumn[0])
+                         color='blue', label=day + ' ' + selectedColumn[0])
             ax_left.set_xticks(xtick_list)
             ax_left.set_xticklabels(xticklabel_list)
 
-            ax_left.set_ylim(0, self.getYlim(selectedColumn[0]))
+            ax_left.set_ylim(0, GbxAxis.default_ylim(selectedColumn[0]))
 
             ax_left.set_xlabel('time')
             ax_left.set_ylabel(selectedColumn[0])
+
+            if self.gbxFilter.isChecked():
+                filter = JFilter()
+                right_filtered = filter.process(left)
+                ax_left.plot(np.arange(len(timelist)), right_filtered,
+                             color='green', label=day + ' ' + selectedColumn[0] + '_filtered')
 
             if len(selectedColumn) == 2:
                 right = sel.select(selectedColumn[1]) \
                     .toPandas() \
                     .values
                 ax_right = ax_left.twinx()
+
                 ax_right.plot(np.arange(len(timelist)), right,
-                              color='red', label=selectedColumn[1])
-                ax_right.set_ylim(0, self.getYlim(selectedColumn[1]))
+                              color='red', label=day + ' ' + selectedColumn[1])
+                ax_right.set_ylim(0, GbxAxis.default_ylim(selectedColumn[1]))
                 ax_right.set_ylabel(selectedColumn[1])
 
+                if self.gbxFilter.isChecked():
+                    filter = JFilter()
+                    right_filtered = filter.process(right)
+                    ax_right.plot(np.arange(len(timelist)), right_filtered,
+                                  color='orange', label=day + ' ' + selectedColumn[1] + '_filtered')
+
+            self.fig.legend(loc='upper right', fontsize=10)
             self.canvas.draw()
 
-    def getYlim(self, type):
-        if type == 'illum':
-            return 130000
-        elif type == 'cct':
-            return 12000
-        elif type == 'swr':
-            return 60
-
-    def makeTimeline(self, timelist):
-        hmlist = [x[0] for x in timelist]
-        xtick_list = []
-        xticklabel_list = []
-        for i in range(0, len(hmlist)):
-            if hmlist[i].split(':')[1] == '00':
-                xtick_list.append(i)
-                xticklabel_list.append(hmlist[i].split(':')[0])
+    # def makeTimeline(self, timelist):
+    #     hmlist = [x[0] for x in timelist]
+    #     xtick_list = []
+    #     xticklabel_list = []
+    #     for i in range(0, len(hmlist)):
+    #         if hmlist[i].split(':')[1] == '00':
+    #             xtick_list.append(i)
+    #             xticklabel_list.append(hmlist[i].split(':')[0])

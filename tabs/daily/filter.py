@@ -1,4 +1,12 @@
-class JFilter:
+from pysparkmgr import Singleton
+
+
+class JFilter(Singleton):
+    def process(self, target_data):
+        noiseSectionList = self.noiseSelecting(target_data)
+        # print(noiseSectionList)
+        return self.interpolation(target_data, noiseSectionList)
+
     def getLimitRange(self, dataArr):
         # find idx of minimum value of left and right side
         mid = int(len(dataArr) / 2)
@@ -19,7 +27,7 @@ class JFilter:
 
         return [leftidx, rightidx]
 
-    def makeNoise(self, srcDataArr):
+    def test_makeNoise(self, srcDataArr):
         import random
         dataArr = list(srcDataArr)
         leftlimidx, rightlimidx = self.getLimitRange(dataArr)

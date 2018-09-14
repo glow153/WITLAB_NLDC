@@ -11,27 +11,27 @@ class Singleton(object):
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            cls._instance = super(Singleton, cls).__new__(
-                cls, *args, **kwargs)
+            cls._instance = super(Singleton, cls) \
+                .__new__(cls, *args, **kwargs)
         return cls._instance
 
 
 class PySparkManager(Singleton):
-    sc = None
-    nt_srs = None
+    _sc = None
+    _nt_srs = None
 
     def __init__(self):
         self.bs_server_ip = '210.102.142.14'
-        self.sc = self.getSparkContext('appName', 'local[*]')
+        self._sc = self.getSparkContext('appName', 'local[*]')
         self.sqlContext = self.getSqlContext()
         self.sundf = self.sqlContext.read.parquet("hdfs:///ds/sun.parquet")
 
     def getSqlContext(self):
-        return SQLContext(self.sc)
+        return SQLContext(self._sc)
 
     def getSparkContext(self, appName, master):
-        if self.sc:
-            return self.sc
+        if self._sc:
+            return self._sc
 
         conf = SparkConf().setAppName(appName)\
                           .setMaster(master)\
@@ -48,6 +48,6 @@ class PySparkManager(Singleton):
 
     def getDF(self, type):
         if type == 'nt_srs':
-            if self.nt_srs is None:
-                self.nt_srs = self.sqlContext.read.parquet('hdfs:///ds/nt_srs.parquet')
-            return self.nt_srs
+            if self._nt_srs is None:
+                self._nt_srs = self.sqlContext.read.parquet('hdfs:///ds/nt_srs.parquet')
+            return self._nt_srs
