@@ -50,10 +50,10 @@ class NLDC_Main(QWidget):
     def initTabs(self):
         self.tabs = QTabWidget()
         self.tabList = []
-        self.tabTitle = ['single', 'daily', 'monthly', 'yearly']
+        self.tabTitle = ['daily', 'single', 'monthly', 'yearly']
 
-        self.tabList.append(TabSingle())
         self.tabList.append(TabDaily())
+        self.tabList.append(TabSingle())
         self.tabList.append(QWidget())
         self.tabList.append(QWidget())
 
