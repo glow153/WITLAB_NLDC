@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMessageBox
 
-from pysparkmgr import PySparkManager, Singleton
+from pysparkmgr.pysparkmgr import PySparkManager
+from pysparkmgr.singleton import Singleton
 
 
 class NLDailyDataset(Singleton):
