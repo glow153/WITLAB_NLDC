@@ -55,7 +55,7 @@ class TabDaily(QWidget):
         layout_r = QVBoxLayout()
         layout_r.addWidget(self.datelist)
         layout_r.addWidget(self.gbxSelDataTbl)
-        layout_r.addWidget(self.gbxAxis)
+        # layout_r.addWidget(self.gbxAxis)
         layout_r.addWidget(self.gbxVisual)
         layout_r.addWidget(self.gbxFilter)
         layout_r.addWidget(self.btn_drawPlot)

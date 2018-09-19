@@ -53,16 +53,25 @@ class Panel_SelectedDataTable(QGroupBox):
         QGroupBox.__init__(self, title)
 
         # init components
+        self.gbxAxis = Panel_Axis('select y axis')
         self.tblwdgLeft = QTableWidget(0, 4)
         self.tblwdgRight = QTableWidget(0, 4)
         self.createSelectedDataTable()
 
         # set layout
-        self.layout = QHBoxLayout()
         self.tblwdgLeft.setFixedWidth(90)
         self.tblwdgRight.setFixedWidth(90)
-        self.layout.addWidget(self.tblwdgLeft)
-        self.layout.addWidget(self.tblwdgRight)
+
+        self.upperLayout = QHBoxLayout()
+        self.upperLayout.addWidget(self.gbxAxis)
+
+        self.lowerLayout = QHBoxLayout()
+        self.lowerLayout.addWidget(self.tblwdgLeft)
+        self.lowerLayout.addWidget(self.tblwdgRight)
+
+        self.layout = QVBoxLayout()
+        self.layout.addLayout(self.upperLayout)
+        self.layout.addLayout(self.lowerLayout)
         self.setLayout(self.layout)
 
     def createSelectedDataTable(self, right_enable=False):
@@ -98,6 +107,54 @@ class Panel_SelectedDataTable(QGroupBox):
                 pass
 
             row += 1
+
+
+class Panel_Axis(QGroupBox):
+    def __init__(self, title):
+        QGroupBox.__init__(self, title)
+        # self.setFixedSize(120, 150)
+
+        self.leftAxis = ['illum', 'cct', 'swr']
+        self.rightAxis = ['illum', 'cct', 'swr']
+
+        self.cbxLeft = QComboBox()
+        self.cbxRight = QComboBox()
+        self.chkEnableRightAxis = QCheckBox('오른쪽 축')
+        self.layout = QGridLayout()
+
+        self.chkEnableRightAxis.setChecked(False)
+        self.cbxRight.setEnabled(False)
+
+        self.setItemsInCbx()
+        self.setComponentsWithLayout()
+
+        self.chkEnableRightAxis.stateChanged.connect(self.enableRightAxis)
+
+    def setItemsInCbx(self):
+        self.cbxLeft.addItems(self.leftAxis)
+        self.cbxRight.addItems(self.rightAxis)
+
+    def setComponentsWithLayout(self):
+        self.layout.setColumnStretch(1, 2)
+        self.layout.setColumnStretch(2, 2)
+
+        self.layout.addWidget(QLabel('왼쪽 축'), 0, 0)
+        self.layout.addWidget(self.chkEnableRightAxis, 0, 1)
+        self.layout.addWidget(self.cbxLeft, 1, 0)
+        self.layout.addWidget(self.cbxRight, 1, 1)
+        self.setLayout(self.layout)
+
+    def enableRightAxis(self):
+        if self.chkEnableRightAxis.isChecked():
+            self.cbxRight.setEnabled(True)
+        else:
+            self.cbxRight.setEnabled(False)
+
+    def getSelectedItem(self):
+        if self.chkEnableRightAxis.isChecked():
+            return [str(self.cbxLeft.currentText()), str(self.cbxRight.currentText())]
+        else:
+            return [str(self.cbxLeft.currentText())]
 
 
 class Panel_Visual(QGroupBox):
@@ -152,55 +209,6 @@ class Panel_Visual(QGroupBox):
         self.layout.addWidget(self.cbxLineType, 2, 1)
 
         self.setLayout(self.layout)
-
-
-class Panel_Axis(QGroupBox):
-    def __init__(self, title):
-        QGroupBox.__init__(self, title)
-        # self.setFixedSize(120, 150)
-
-        self.leftAxis = ['illum', 'cct', 'swr']
-        self.rightAxis = ['illum', 'cct', 'swr']
-
-        self.cbxLeft = QComboBox()
-        self.cbxRight = QComboBox()
-        self.chkEnableRightAxis = QCheckBox()
-        self.layout = QGridLayout()
-
-        self.chkEnableRightAxis.setChecked(False)
-        self.cbxRight.setEnabled(False)
-
-        self.setItemsInCbx()
-        self.setComponentsWithLayout()
-
-        self.chkEnableRightAxis.stateChanged.connect(self.enableRightAxis)
-
-    def setItemsInCbx(self):
-        self.cbxLeft.addItems(self.leftAxis)
-        self.cbxRight.addItems(self.rightAxis)
-
-    def setComponentsWithLayout(self):
-        self.layout.setColumnStretch(1, 3)
-        self.layout.setColumnStretch(2, 3)
-
-        self.layout.addWidget(QLabel('왼쪽 축'), 0, 1)
-        self.layout.addWidget(self.cbxLeft, 0, 2)
-        self.layout.addWidget(self.chkEnableRightAxis, 1, 0)
-        self.layout.addWidget(QLabel('오른쪽 축'), 1, 1)
-        self.layout.addWidget(self.cbxRight, 1, 2)
-        self.setLayout(self.layout)
-
-    def enableRightAxis(self):
-        if self.chkEnableRightAxis.isChecked():
-            self.cbxRight.setEnabled(True)
-        else:
-            self.cbxRight.setEnabled(False)
-
-    def getSelectedItem(self):
-        if self.chkEnableRightAxis.isChecked():
-            return [str(self.cbxLeft.currentText()), str(self.cbxRight.currentText())]
-        else:
-            return [str(self.cbxLeft.currentText())]
 
 
 class Panel_Filter(QGroupBox):
