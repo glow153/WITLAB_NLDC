@@ -1,3 +1,4 @@
+from model import Singleton
 from pyspark import SparkConf
 from pyspark import SparkContext
 from pyspark.sql import SQLContext
@@ -6,14 +7,6 @@ from pyspark.sql import SQLContext
 # 싱글톤을 쓰는 이유 : PySpark에 한번만 접속하여 연결을 유지해야 하기 때문, 중복접속시 에러남
 # 따라서 Spark로의 모든 접속은 PySparkManager 싱글톤 객체를 통해서만 수행되어야 함
 # 다른 좋은 방법들도 있겠지만 우선은 싱글톤을 활용해보자
-class Singleton(object):
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(Singleton, cls).__new__(
-                cls, *args, **kwargs)
-        return cls._instance
 
 
 class PySparkManager(Singleton):

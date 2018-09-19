@@ -5,7 +5,8 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from pysparkmgr import PySparkManager
-from tabs.daily.gbox import (GbxDatelist, GbxVisual, GbxAxis, GbxFilter)
+from tabs.daily.panels import (Panel_Datelist, Panel_Visual, Panel_SelectedDataTable,
+                               Panel_Axis, Panel_Filter)
 
 
 class TabDaily(QWidget):
@@ -18,10 +19,11 @@ class TabDaily(QWidget):
         self.fig = plt.Figure()
         self.canvas = FigureCanvas(self.fig)
 
-        self.datelist = GbxDatelist('날짜 선택')
-        self.gbxAxis = GbxAxis('y축 설정')
-        self.gbxVisual = GbxVisual('선 종류')
-        self.gbxFilter = GbxFilter('필터링 적용')
+        self.datelist = Panel_Datelist('날짜 선택')
+        self.gbxAxis = Panel_Axis('y축 설정')
+        self.gbxSelDataTbl = Panel_SelectedDataTable('selected data table')
+        self.gbxVisual = Panel_Visual('선 종류')
+        self.gbxFilter = Panel_Filter('필터링 적용')
         self.btn_drawPlot = QPushButton("차트그리기")
 
         # Left Layout
@@ -52,6 +54,7 @@ class TabDaily(QWidget):
     def mainLayout_right(self):
         layout_r = QVBoxLayout()
         layout_r.addWidget(self.datelist)
+        layout_r.addWidget(self.gbxSelDataTbl)
         layout_r.addWidget(self.gbxAxis)
         layout_r.addWidget(self.gbxVisual)
         layout_r.addWidget(self.gbxFilter)
@@ -65,7 +68,7 @@ class TabDaily(QWidget):
         plt.close()
         self.fig.clear()
 
-        daylist = self.datelist.getItemChecked()
+        daylist = self.datelist.getCheckedDates()
         selectedColumn = self.gbxAxis.getSelectedItem()
         plotTitle = ''
 

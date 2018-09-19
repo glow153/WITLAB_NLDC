@@ -19,7 +19,7 @@ class NLDC_Main(QWidget):
         self.setupUI()
 
     def setupUI(self):
-        self.setGeometry(0, 0, 1280, 720)
+        self.setGeometry(0, 0, 1366, 720)
         self.setWindowTitle(self.title)
         self.setWindowIcon(QIcon('icon.png'))
         self.wnd2Center()

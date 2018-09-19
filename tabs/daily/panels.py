@@ -1,25 +1,27 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QComboBox, QGroupBox, QVBoxLayout, QHBoxLayout,
-                             QGridLayout, QLabel, QCheckBox,
-                             QListWidget, QListWidgetItem)
+                             QGridLayout, QLabel, QCheckBox, QTableWidget,
+                             QAbstractItemView, QListWidget, QListWidgetItem,
+                             QHeaderView, QTableWidgetItem)
 from matplotlib import colors as mcolors
 
 from pysparkmgr import PySparkManager
 
 
-class GbxDatelist(QGroupBox):
+class Panel_Datelist(QGroupBox):
     def __init__(self, title):
         QGroupBox.__init__(self, title)
         self.listwdg = QListWidget()
 
+        # init layout
+        self.layout = QVBoxLayout()
+        # self.listwdg.setFixedWidth(90)
+        self.layout.addWidget(self.listwdg)
+        self.setLayout(self.layout)
+
         # get date list from dataframe using pyspark
         self.datelist = self.getDatelist()
         self.makeList(self.datelist)
-
-        # init layout
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.listwdg)
-        self.setLayout(self.layout)
 
     def getDatelist(self):  # 날짜만 가져옴
         pysparkmgr = PySparkManager()
@@ -38,7 +40,7 @@ class GbxDatelist(QGroupBox):
             item.setCheckState(Qt.Unchecked)
             self.listwdg.addItem(item)
 
-    def getItemChecked(self):
+    def getCheckedDates(self):
         ret = []
         for i in range(self.listwdg.count()):
             if self.listwdg.item(i).checkState() == Qt.Checked:
@@ -46,7 +48,59 @@ class GbxDatelist(QGroupBox):
         return ret
 
 
-class GbxVisual(QGroupBox):
+class Panel_SelectedDataTable(QGroupBox):
+    def __init__(self, title):
+        QGroupBox.__init__(self, title)
+
+        # init components
+        self.tblwdgLeft = QTableWidget(0, 4)
+        self.tblwdgRight = QTableWidget(0, 4)
+        self.createSelectedDataTable()
+
+        # set layout
+        self.layout = QHBoxLayout()
+        self.tblwdgLeft.setFixedWidth(90)
+        self.tblwdgRight.setFixedWidth(90)
+        self.layout.addWidget(self.tblwdgLeft)
+        self.layout.addWidget(self.tblwdgRight)
+        self.setLayout(self.layout)
+
+    def createSelectedDataTable(self, right_enable=False):
+        self.tblwdgLeft.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tblwdgLeft.setHorizontalHeaderLabels(("date", "color", "marker", "dash"))
+        self.tblwdgLeft.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.tblwdgLeft.verticalHeader().hide()
+        self.tblwdgLeft.setShowGrid(False)
+        # self.tblwdgLeft.cellActivated.connect()
+
+        if right_enable:
+            self.tblwdgRight.setSelectionBehavior(QAbstractItemView.SelectRows)
+            self.tblwdgRight.setHorizontalHeaderLabels(("date", "color", "marker", "dash"))
+            self.tblwdgRight.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+            self.tblwdgRight.verticalHeader().hide()
+            self.tblwdgRight.setShowGrid(False)
+            # self.tblwdgRight.cellActivated.connect()
+
+    def addDataFromSelectedDates(self, datelist, right_enable=False):
+        for day in datelist:
+            selectedDateItem = QTableWidgetItem(day)
+            selectedDateItem.setFlags(Qt.ItemIsUserCheckable)
+            colorItem = QTableWidgetItem()
+
+            row = self.tblwdgLeft.rowCount()
+            self.tblwdgLeft.insertRow(row)
+            self.tblwdgLeft.setItem(row, 0, day)
+            self.tblwdgLeft.setItem(row, 1, day)
+            self.tblwdgLeft.setItem(row, 2, day)
+            self.tblwdgLeft.setItem(row, 3, day)
+
+            if right_enable:
+                pass
+
+            row += 1
+
+
+class Panel_Visual(QGroupBox):
     def __init__(self, title):
         QGroupBox.__init__(self, title)
         # self.setFixedSize(120, 150)
@@ -100,8 +154,7 @@ class GbxVisual(QGroupBox):
         self.setLayout(self.layout)
 
 
-class GbxAxis(QGroupBox):
-
+class Panel_Axis(QGroupBox):
     def __init__(self, title):
         QGroupBox.__init__(self, title)
         # self.setFixedSize(120, 150)
@@ -150,7 +203,7 @@ class GbxAxis(QGroupBox):
             return [str(self.cbxLeft.currentText())]
 
 
-class GbxFilter(QGroupBox):
+class Panel_Filter(QGroupBox):
 
     def __init__(self, title):
         QGroupBox.__init__(self, title)
