@@ -51,30 +51,33 @@ class Panel_Datelist(QGroupBox):
 class Panel_SelectedDataTable(QGroupBox):
     def __init__(self, title):
         QGroupBox.__init__(self, title)
+        # self.setFixedSize(120, 150)
 
-        # init components
-        self.gbxAxis = Panel_Axis('select y axis')
+        self.leftAxisType = ['illum', 'cct', 'swr']
+        self.rightAxisType = ['illum', 'cct', 'swr']
+
+        self.cbxLeft = QComboBox()
+        self.cbxRight = QComboBox()
+        self.chkEnableRightAxis = QCheckBox('오른쪽 축')
+        self.layout = QGridLayout()
         self.tblwdgLeft = QTableWidget(0, 4)
         self.tblwdgRight = QTableWidget(0, 4)
         self.createSelectedDataTable()
 
-        # set layout
-        self.tblwdgLeft.setFixedWidth(90)
-        self.tblwdgRight.setFixedWidth(90)
+        self.chkEnableRightAxis.setChecked(False)
+        self.cbxRight.setEnabled(False)
 
-        self.upperLayout = QHBoxLayout()
-        self.upperLayout.addWidget(self.gbxAxis)
+        self.setItemsInCbx()
+        self.setComponentsWithLayout()
 
-        self.lowerLayout = QHBoxLayout()
-        self.lowerLayout.addWidget(self.tblwdgLeft)
-        self.lowerLayout.addWidget(self.tblwdgRight)
+        self.chkEnableRightAxis.stateChanged.connect(self.enableRightAxis)
 
-        self.layout = QVBoxLayout()
-        self.layout.addLayout(self.upperLayout)
-        self.layout.addLayout(self.lowerLayout)
-        self.setLayout(self.layout)
+    def setItemsInCbx(self):
+        self.cbxLeft.addItems(self.leftAxisType)
+        self.cbxRight.addItems(self.rightAxisType)
 
-    def createSelectedDataTable(self, right_enable=False):
+    def createSelectedDataTable(self):
+        self.tblwdgLeft.setFixedWidth(130)
         self.tblwdgLeft.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tblwdgLeft.setHorizontalHeaderLabels(("date", "color", "marker", "dash"))
         self.tblwdgLeft.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
@@ -82,13 +85,38 @@ class Panel_SelectedDataTable(QGroupBox):
         self.tblwdgLeft.setShowGrid(False)
         # self.tblwdgLeft.cellActivated.connect()
 
-        if right_enable:
-            self.tblwdgRight.setSelectionBehavior(QAbstractItemView.SelectRows)
-            self.tblwdgRight.setHorizontalHeaderLabels(("date", "color", "marker", "dash"))
-            self.tblwdgRight.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-            self.tblwdgRight.verticalHeader().hide()
-            self.tblwdgRight.setShowGrid(False)
-            # self.tblwdgRight.cellActivated.connect()
+        self.tblwdgRight.setFixedWidth(130)
+        self.tblwdgRight.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tblwdgRight.setHorizontalHeaderLabels(("date", "color", "marker", "dash"))
+        self.tblwdgRight.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.tblwdgRight.verticalHeader().hide()
+        self.tblwdgRight.setShowGrid(False)
+        # self.tblwdgRight.cellActivated.connect()
+
+    def setComponentsWithLayout(self):
+        self.layout.setColumnStretch(1, 2)
+        self.layout.setColumnStretch(2, 2)
+        self.layout.setColumnStretch(3, 2)
+
+        self.layout.addWidget(QLabel('왼쪽 축'), 0, 0)
+        self.layout.addWidget(self.chkEnableRightAxis, 0, 1)
+        self.layout.addWidget(self.cbxLeft, 1, 0)
+        self.layout.addWidget(self.cbxRight, 1, 1)
+        self.layout.addWidget(self.tblwdgLeft, 2, 0)
+        self.layout.addWidget(self.tblwdgRight, 2, 1)
+
+        if not self.chkEnableRightAxis.isChecked():
+            self.tblwdgRight.setEnabled(False)
+
+        self.setLayout(self.layout)
+
+    def enableRightAxis(self):
+        if self.chkEnableRightAxis.isChecked():
+            self.cbxRight.setEnabled(True)
+            self.tblwdgRight.setEnabled(True)
+        else:
+            self.cbxRight.setEnabled(False)
+            self.tblwdgRight.setEnabled(False)
 
     def addDataFromSelectedDates(self, datelist, right_enable=False):
         for day in datelist:
@@ -107,48 +135,6 @@ class Panel_SelectedDataTable(QGroupBox):
                 pass
 
             row += 1
-
-
-class Panel_Axis(QGroupBox):
-    def __init__(self, title):
-        QGroupBox.__init__(self, title)
-        # self.setFixedSize(120, 150)
-
-        self.leftAxis = ['illum', 'cct', 'swr']
-        self.rightAxis = ['illum', 'cct', 'swr']
-
-        self.cbxLeft = QComboBox()
-        self.cbxRight = QComboBox()
-        self.chkEnableRightAxis = QCheckBox('오른쪽 축')
-        self.layout = QGridLayout()
-
-        self.chkEnableRightAxis.setChecked(False)
-        self.cbxRight.setEnabled(False)
-
-        self.setItemsInCbx()
-        self.setComponentsWithLayout()
-
-        self.chkEnableRightAxis.stateChanged.connect(self.enableRightAxis)
-
-    def setItemsInCbx(self):
-        self.cbxLeft.addItems(self.leftAxis)
-        self.cbxRight.addItems(self.rightAxis)
-
-    def setComponentsWithLayout(self):
-        self.layout.setColumnStretch(1, 2)
-        self.layout.setColumnStretch(2, 2)
-
-        self.layout.addWidget(QLabel('왼쪽 축'), 0, 0)
-        self.layout.addWidget(self.chkEnableRightAxis, 0, 1)
-        self.layout.addWidget(self.cbxLeft, 1, 0)
-        self.layout.addWidget(self.cbxRight, 1, 1)
-        self.setLayout(self.layout)
-
-    def enableRightAxis(self):
-        if self.chkEnableRightAxis.isChecked():
-            self.cbxRight.setEnabled(True)
-        else:
-            self.cbxRight.setEnabled(False)
 
     def getSelectedItem(self):
         if self.chkEnableRightAxis.isChecked():

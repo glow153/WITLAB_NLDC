@@ -6,7 +6,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from pysparkmgr import PySparkManager
 from tabs.daily.panels import (Panel_Datelist, Panel_Visual, Panel_SelectedDataTable,
-                               Panel_Axis, Panel_Filter)
+                               Panel_Filter)
 
 
 class TabDaily(QWidget):
@@ -20,11 +20,11 @@ class TabDaily(QWidget):
         self.canvas = FigureCanvas(self.fig)
 
         self.datelist = Panel_Datelist('날짜 선택')
-        self.gbxAxis = Panel_Axis('y축 설정')
-        self.gbxSelDataTbl = Panel_SelectedDataTable('selected data table')
+        # self.gbxAxis = Panel_Axis('y축 설정')
+        self.gbxSelDataTbl = Panel_SelectedDataTable('선택된 데이터')
         self.gbxVisual = Panel_Visual('선 종류')
         self.gbxFilter = Panel_Filter('필터링 적용')
-        self.btn_drawPlot = QPushButton("차트그리기")
+        self.btn_drawPlot = QPushButton("그래프 그리기")
 
         # Left Layout
         self.leftLayout = self.mainLayout_left()
@@ -69,7 +69,8 @@ class TabDaily(QWidget):
         self.fig.clear()
 
         daylist = self.datelist.getCheckedDates()
-        selectedColumn = self.gbxAxis.getSelectedItem()
+        self.gbxSelDataTbl.addDataFromSelectedDates()
+        selectedColumn = self.gbxSelDataTbl.getSelectedItem()
         plotTitle = ''
 
         for day in daylist:  # multiple select by checked days
