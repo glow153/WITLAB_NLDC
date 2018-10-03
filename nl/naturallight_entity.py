@@ -194,11 +194,11 @@ class NLEntity(object):
                 irdr = 0
 
             if weight_func == 'ery':
-                from model.ref_func import erythemal_action_spectrum as eryf
+                from mvc.model import erythemal_action_spectrum as eryf
                 weightl = eryf(wll)
                 weightr = eryf(wlr)
             elif weight_func == 'vitd':
-                from model.ref_func import vitd_weight_func as vitdf
+                from mvc.model import vitd_weight_func as vitdf
                 weightl = vitdf(wll)
                 weightr = vitdf(wlr)
             else:

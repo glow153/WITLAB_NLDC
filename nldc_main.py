@@ -1,33 +1,38 @@
 import sys
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QTabWidget, QVBoxLayout,
-                             QWidget)
+                             QWidget, QMainWindow)
 
 from tabs.daily.tab_daily import TabDaily
 from tabs.single.tab_single import TabSingle
 
 
-class NLDC_Main(QWidget):
+class NLDC_Main(QMainWindow):
     def __init__(self, title):
-        QWidget.__init__(self, flags=Qt.Widget)
+        super(NLDC_Main, self).__init__()
         self.title = title
-
-        self.centerLayout = QVBoxLayout(self)
-
         self.setupUI()
+
+        self.createActions()
+        self.createMenus()
+        self.createToolBars()
+        self.createStatusBar()
 
     def setupUI(self):
         self.setGeometry(0, 0, 1366, 720)
         self.setWindowTitle(self.title)
         self.setWindowIcon(QIcon('icon.png'))
         self.wnd2Center()
-
         self.initTabs()
 
-        self.centerLayout.addWidget(self.tabs)
-        self.setLayout(self.centerLayout)
+        vbox = QVBoxLayout()
+        vbox.setContentsMargins(5, 5, 5, 5)
+        vbox.addWidget(self.tabs)
+
+        widget = QWidget()
+        widget.setLayout(vbox)
+        self.setCentralWidget(widget)
 
     def wnd2Center(self):
         # geometry of the main window

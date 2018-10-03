@@ -1,4 +1,4 @@
-from model import Singleton
+from mvc.model import Singleton
 from pyspark import SparkConf
 from pyspark import SparkContext
 from pyspark.sql import SQLContext

@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from pysparkmgr import PySparkManager
-from tabs.daily.panels import (Panel_Datelist, Panel_Visual, Panel_SelectedDataTable,
+from tabs.daily.panels import (Panel_Datelist, Panel_SelectedDataTable,
                                Panel_Filter)
 
 
@@ -22,7 +22,7 @@ class TabDaily(QWidget):
         self.datelist = Panel_Datelist('날짜 선택')
         # self.gbxAxis = Panel_Axis('y축 설정')
         self.gbxSelDataTbl = Panel_SelectedDataTable('선택된 데이터')
-        self.gbxVisual = Panel_Visual('선 종류')
+        # self.gbxVisual = Panel_Visual('선 종류')
         self.gbxFilter = Panel_Filter('필터링 적용')
         self.btn_drawPlot = QPushButton("그래프 그리기")
 
@@ -56,7 +56,7 @@ class TabDaily(QWidget):
         layout_r.addWidget(self.datelist)
         layout_r.addWidget(self.gbxSelDataTbl)
         # layout_r.addWidget(self.gbxAxis)
-        layout_r.addWidget(self.gbxVisual)
+        # layout_r.addWidget(self.gbxVisual)
         layout_r.addWidget(self.gbxFilter)
         layout_r.addWidget(self.btn_drawPlot)
         layout_r.addStretch(1)
