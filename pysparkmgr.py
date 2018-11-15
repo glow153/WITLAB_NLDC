@@ -14,7 +14,7 @@ class PySparkManager(Singleton):
     nt_srs = None
 
     def __init__(self):
-        self.bs_server_ip = '210.102.142.14'
+        self.bs_server_ip = 'xxx.xxx.xxx.xxx'
         self.sc = self.getSparkContext('appName', 'local[*]')
         self.sqlContext = self.getSqlContext()
         self.sundf = self.sqlContext.read.parquet("hdfs:///ds/sun.parquet")
