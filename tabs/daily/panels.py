@@ -126,10 +126,10 @@ class Panel_SelectedDataTable(QGroupBox):
 
             row = self.tblwdgLeft.rowCount()
             self.tblwdgLeft.insertRow(row)
-            self.tblwdgLeft.setItem(row, 0, day)
-            self.tblwdgLeft.setItem(row, 1, day)
-            self.tblwdgLeft.setItem(row, 2, day)
-            self.tblwdgLeft.setItem(row, 3, day)
+            self.tblwdgLeft.setItem(row, 0, selectedDateItem)
+            self.tblwdgLeft.setItem(row, 1, selectedDateItem)
+            self.tblwdgLeft.setItem(row, 2, selectedDateItem)
+            self.tblwdgLeft.setItem(row, 3, selectedDateItem)
 
             if right_enable:
                 pass

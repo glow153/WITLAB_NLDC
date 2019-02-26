@@ -69,7 +69,7 @@ class TabDaily(QWidget):
         self.fig.clear()
 
         daylist = self.datelist.getCheckedDates()
-        self.gbxSelDataTbl.addDataFromSelectedDates()
+        self.gbxSelDataTbl.addDataFromSelectedDates(daylist)
         selectedColumn = self.gbxSelDataTbl.getSelectedItem()
         plotTitle = ''
 

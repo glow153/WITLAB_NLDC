@@ -42,12 +42,12 @@ class TabSingle(QWidget):
         # get PySparkManager
         # self.pysparkmgr = PySparkManager()
 
-    def getSpectra(self, date):
+    def getSpectra(self, datehm):
         import happybase
         connection = happybase.Connection('210.102.142.14')
         print(connection.tables())
         table = connection.table('natural_light')
-        return table.row(date, ['sp_ird'])
+        return table.row(datehm, ['sp_ird'])
 
     @pyqtSlot(name='drawSpectra')
     def drawSp(self):

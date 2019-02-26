@@ -2,7 +2,7 @@ import sys
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QTabWidget, QVBoxLayout,
-                             QWidget, QMainWindow)
+                             QWidget, QMainWindow, QAction)
 
 from tabs.daily.tab_daily import TabDaily
 from tabs.single.tab_single import TabSingle
@@ -14,13 +14,13 @@ class NLDC_Main(QMainWindow):
         self.title = title
         self.setupUI()
 
-        self.createActions()
+        # self.createActions()
         self.createMenus()
         self.createToolBars()
         self.createStatusBar()
 
     def setupUI(self):
-        self.setGeometry(0, 0, 1366, 720)
+        self.setGeometry(0, 0, 1366, 768)
         self.setWindowTitle(self.title)
         self.setWindowIcon(QIcon('icon.png'))
         self.wnd2Center()
@@ -48,9 +48,15 @@ class NLDC_Main(QMainWindow):
     #     self.actNew = QAction(None, '&New', self,
     #                           statusTip='Create a New File',
     #                           triggered=self.newFile)
-    #
-    # def createMenus(self):
-    #     self.mainMenu = self.menuBar().addMenu('&File')
+
+    def createMenus(self):
+        self.mainMenu = self.menuBar().addMenu('&File')
+
+    def createToolBars(self):
+        pass
+
+    def createStatusBar(self):
+        pass
 
     def initTabs(self):
         self.tabs = QTabWidget()

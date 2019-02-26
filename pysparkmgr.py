@@ -1,4 +1,4 @@
-from mvc.model import Singleton
+from mvc.model.singleton import Singleton
 from pyspark import SparkConf
 from pyspark import SparkContext
 from pyspark.sql import SQLContext
@@ -14,10 +14,10 @@ class PySparkManager(Singleton):
     nt_srs = None
 
     def __init__(self):
-        self.bs_server_ip = 'xxx.xxx.xxx.xxx'
+        self.bs_server_ip = '210.102.142.14'
         self.sc = self.getSparkContext('appName', 'local[*]')
         self.sqlContext = self.getSqlContext()
-        self.sundf = self.sqlContext.read.parquet("hdfs:///ds/sun.parquet")
+        self.sundf = self.sqlContext.read.parquet("hdfs:///sun/srs.parquet")
 
     def getSqlContext(self):
         return SQLContext(self.sc)
@@ -42,5 +42,5 @@ class PySparkManager(Singleton):
     def getDF(self, type):
         if type == 'nt_srs':
             if self.nt_srs is None:
-                self.nt_srs = self.sqlContext.read.parquet('hdfs:///ds/nt_srs.parquet')
+                self.nt_srs = self.sqlContext.read.parquet('hdfs:///nl/witlab/cas/nt_srs.parquet')
             return self.nt_srs
