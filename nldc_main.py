@@ -14,7 +14,7 @@ class NLDC_Main(QMainWindow):
         self.title = title
         self.setupUI()
 
-        # self.createActions()
+        self.createActions()
         self.createMenus()
         self.createToolBars()
         self.createStatusBar()
@@ -44,10 +44,11 @@ class NLDC_Main(QMainWindow):
         # top left of rectangle becomes top left of window centering it
         self.move(qr.topLeft())
 
-    # def createActions(self):
-    #     self.actNew = QAction(None, '&New', self,
-    #                           statusTip='Create a New File',
-    #                           triggered=self.newFile)
+    def createActions(self):
+        # self.actNew = QAction(None, '&New', self,
+        #                       statusTip='Create a New File',
+        #                       triggered=self.newFile)
+        pass
 
     def createMenus(self):
         self.mainMenu = self.menuBar().addMenu('&File')
