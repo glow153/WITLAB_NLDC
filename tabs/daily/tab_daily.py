@@ -79,12 +79,12 @@ class TabDaily(QWidget):
             sel = df.filter('date == "%s"' % day)
 
             timelist = sel.select('time') \
-                .toPandas() \
-                .values
+                          .toPandas() \
+                          .values
 
             left = sel.select(selectedColumn[0]) \
-                .toPandas() \
-                .values
+                      .toPandas() \
+                      .values
 
             hmlist = [x[0] for x in timelist]
             xtick_list = []
@@ -95,8 +95,8 @@ class TabDaily(QWidget):
                     xticklabel_list.append(hmlist[i].split(':')[0])
 
             ax_left = self.fig.add_subplot(111)
-            ax_left.plot(np.arange(len(timelist)), left,
-                         color='blue', label=selectedColumn[0])
+            ax_left.plot(np.arange(len(timelist)), left, '-', label=selectedColumn[0])
+                         # color='blue', label=selectedColumn[0])
             ax_left.set_xticks(xtick_list)
             ax_left.set_xticklabels(xticklabel_list)
 
@@ -107,11 +107,11 @@ class TabDaily(QWidget):
 
             if len(selectedColumn) == 2:
                 right = sel.select(selectedColumn[1]) \
-                    .toPandas() \
-                    .values
+                           .toPandas() \
+                           .values
                 ax_right = ax_left.twinx()
-                ax_right.plot(np.arange(len(timelist)), right,
-                              color='red', label=selectedColumn[1])
+                ax_right.plot(np.arange(len(timelist)), right, ':', label=selectedColumn[1])
+                              # color='red', label=selectedColumn[1])
                 ax_right.set_ylim(0, self.getYlim(selectedColumn[1]))
                 ax_right.set_ylabel(selectedColumn[1])
 
